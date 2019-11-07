@@ -1,0 +1,271 @@
+server:
+  port: 8443
+  ssl:
+    key-store: classpath:ssl/tomcat.keystore
+    key-store-password: preving
+    key-password: preving
+  servlet:
+    context-path: /sajpapi
+
+# ===============================
+# = JWT
+# ===============================
+jwt:
+  header: Authorization
+  prefijo: Bearer
+  secret: clave para encriptar jwt!
+  expiration: 18000
+  route:
+    authentication:
+      path: /login
+
+queue:
+  name: restapi-sajp
+
+spring:
+
+  # RabbitMQ properties
+  rabbitmq:
+    host: 155.155.15.31
+    port: 5672
+    username: appIntranetApi
+    password: 1ntr4n3t4p1
+
+  jackson:
+    serialization:
+      indent-output: true
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+  data:
+    rest:
+      default-media-type: application/json
+  profiles:
+    active: dev
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  jmx:
+    enabled: false # necesario para no obtener el siguiente error: Unable to register MBean [org.apache.tomcat.dbcp.dbcp2.BasicDataSource
+
+  # ===============================
+  # = JPA / HIBERNATE
+  # ===============================
+  # Show or not log for each sql query
+  jpa:
+    show-sql: false
+    # Hibernate ddl auto (create, create-drop, update): with "create-drop" the database
+    # schema will be automatically created afresh for every start of application
+    hibernate:
+      ddl-auto: none
+      # Naming strategy
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyHbmImpl
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+    # Allows Hibernate to generate SQL optimized for a particular DBMS
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.Oracle10gDialect
+
+
+# ====================================
+# = Otras configuraciones genericas
+# ====================================
+
+roles:
+  tecnico-externo: 25005
+
+ejecucionesSimultaneas: 1
+
+# Numero de veces que intenta una ejecucion, para no quedarnos intentando siempre la misma en caso de que de error
+intentosEjecucion: 3
+
+---
+
+# =================================================
+# = DEV
+# =================================================
+
+spring:
+  profiles: dev
+
+
+
+# ===============================
+# = DATA SOURCE
+# ===============================
+# Set here configurations for the database connection
+datasource:
+  db-sajp:
+    jdbcUrl: jdbc:oracle:thin:@155.155.15.228:1521/pre
+#    username: gc2006_release
+    username: sajp
+    password: 6DPtc36z1111_
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    # Keep the connection alive if idle for a long time (needed in production)
+    testWhileIdle: true
+    validationQuery: SELECT 1
+    minimum-idle: 1
+    maximum-pool-size: 1
+
+  db-secure:
+    jdbcUrl: jdbc:oracle:thin:@155.155.15.228:1521/pre
+    username: optec
+    password: 6DPtc36z1111_
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    minimum-idle: 1
+    maximum-pool-size: 1
+
+
+
+# CONFIGURACION PARA LA GENERACION DE DOCUMENTACION
+# ......................................................................................................................
+generacionPdf:
+  # carpeta temporarl para generar los documentos de ofertas; ofertas, contratos y anexos, no se almacenan los ficheros, son temporales.
+  rutaCarpetaTemporal: /home/preving/app/recursos/crm/clientes/pd/documentacion/tmp/
+
+  # Carpeta en la que metemos el fichero pdf para descargar, no se almacenan los ficheros, son temporales.
+  rutaFinalRegistros: /home/preving/app/recursos/crm/clientes/pd/documentacion/
+
+  # Ruta en la que se encuentran los odt generados
+  rutaOdt: c:/temporales/
+
+  # Ruta en la que se encuentran las plantillas
+  rutaPlantilla: C:/Proyects/templates/vs/epid/templates/
+
+  # Configuracion conexion servidor openoffice
+  hostOpenOffice: 155.155.16.198
+  puertoOpenOffice: 8100
+
+api-comunicacion:
+  url: https://intranet.preving.com/communication-api
+  usuario: usuarioPreving
+  password: pwdPreving
+  keystore: classpath:ssl/tomcat.keystore
+  keystore-password: preving
+
+modoDebugMails: true
+mailDebug: b.pavon@preving.com
+
+ejecutarProcesoAutomatico: false
+
+modoPruebasPlantilla: false
+
+rutaApiRestDoc: https://localhost:8443/preving-docs
+
+plantillaImgGraficos:
+  ruta: C:/temporales/graficos_temp
+  tamanioMax: 10485760
+
+---
+
+# =================================================
+# = DEMO
+# =================================================
+
+spring:
+  profiles: demo
+
+datasource:
+  db-vs2007:
+    jndi-name: java:comp/env/jdbc/vs2007
+
+  db-gc2006:
+    jndi-name: java:comp/env/jdbc/gc
+
+
+# CONFIGURACION PARA LA GENERACION DE DOCUMENTACION
+# ......................................................................................................................
+generacionPdf:
+  # carpeta temporarl para generar los documentos de epid
+  rutaCarpetaTemporal: /home/preving/app/recursos/temp/epid/
+
+  # Carpeta en la que metemos el fichero pdf para descargar, no se almacenan los ficheros, son temporales.
+  rutaFinalRegistros: /home/preving/app/recursos/temp/epid/final/
+
+  # Ruta en la que se encuentran los odt generados
+  rutaOdt: /home/preving/app/recursos/temp/epid/odt/
+
+  # Ruta en la que se encuentran las plantillas
+  rutaPlantilla: /home/preving/app/recursos/templates/vs/epid/templates/
+
+  # Configuracion conexion servidor openoffice
+  hostOpenOffice: 155.155.16.198
+  puertoOpenOffice: 8100
+
+api-comunicacion:
+  url: https://intranet.preving.com/communication-api
+  usuario: usuarioPreving
+  password: pwdPreving
+  keystore: classpath:ssl/tomcat.keystore
+  keystore-password: preving
+
+modoDebugMails: false
+mailDebug: j.silva@preving.com
+
+ejecutarProcesoAutomatico: true
+
+modoPruebasPlantilla: false
+
+rutaApiRestDoc: https://demointranet.preving.com/preving-docs
+
+plantillaImgGraficos:
+  ruta: /home/preving/app/recursos/temp/epid/graficos_temp
+  tamanioMax: 10485760
+
+---
+
+# =================================================
+# = PROD
+# =================================================
+
+spring:
+  profiles: prod
+
+datasource:
+  db-vs2007:
+    jndi-name: java:comp/env/jdbc/vs2007
+
+  db-gc2006:
+    jndi-name: java:comp/env/jdbc/gc
+
+
+# CONFIGURACION PARA LA GENERACION DE DOCUMENTACION
+# ......................................................................................................................
+generacionPdf:
+  # carpeta temporarl para generar los documentos de epid
+  rutaCarpetaTemporal: /home/preving/app/recursos/temp/epid/
+
+  # Carpeta en la que metemos el fichero pdf para descargar, no se almacenan los ficheros, son temporales.
+  rutaFinalRegistros: /home/preving/app/recursos/temp/epid/final/
+
+  # Ruta en la que se encuentran los odt generados
+  rutaOdt: /home/preving/app/recursos/temp/epid/odt/
+
+  # Ruta en la que se encuentran las plantillas
+  rutaPlantilla: /home/preving/app/recursos/templates/vs/epid/templates/
+
+  # Configuracion conexion servidor openoffice
+  hostOpenOffice: 155.155.15.198
+  puertoOpenOffice: 8100
+
+api-comunicacion:
+  url: https://intranet.preving.com/communication-api
+  usuario: usuarioPreving
+  password: pwdPreving
+  keystore: classpath:ssl/tomcat.keystore
+  keystore-password: preving
+
+modoDebugMails: false
+mailDebug: j.silva@preving.com
+
+ejecutarProcesoAutomatico: true
+
+modoPruebasPlantilla: false
+
+rutaApiRestDoc: https://intranet.preving.com/preving-docs
+
+plantillaImgGraficos:
+  ruta: /home/preving/app/recursos/temp/epid/graficos_temp
+  tamanioMax: 10485760
